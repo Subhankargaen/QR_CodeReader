@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar Code Scanner</title>
+    <link rel="stylesheet" href="barcode.css">
+    <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.19.2/umd/index.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        window.onload = function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || 
+                             sessionStorage.getItem('isLoggedIn') === 'true';
+            
+            if (!isLoggedIn) {
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="background-3d">
+        <div class="grid-lines"></div>
+        <div class="floating-barcodes">
+            <div class="floating-barcode"></div>
+            <div class="floating-barcode"></div>
+            <div class="floating-barcode"></div>
+        </div>
+        <div class="scanning-line"></div>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img src="bggg.jpg" alt="Quantum Coder Logo">
+                <a href="#">Quantum Coder</a>
+            </div>
+            <nav>
+                <ul>
+                    <li class="dropdown">
+                        <button class="dropdown-btn" onclick="toggleDropdown()"><i class="fas fa-ellipsis-v"></i></button>
+                        <div class="dropdown-content" id="dropdownContent">
+                            <a href="index.html" class="dropdown-item">
+                                <i class="fas fa-home"></i> Home
+                            </a>
+                            <a href="barcode.html" class="dropdown-item">
+                                <i class="fas fa-barcode"></i> Bar Code Scanner
+                            </a>
+                            <a href="about.html" class="dropdown-item">
+                                <i class="fas fa-info-circle"></i> About Our QR Code
+                            </a>
+                        </div>
+                    </li>
+                    <li><button id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button></li>
+                    <li><button id="dark-mode-toggle"><i class="fas fa-moon"></i></button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="hero-section">
+            <h1>Professional Barcode Scanner</h1>
+            <p class="subtitle">Scan any barcode with precision and ease</p>
+        </div>
+
+        <div class="scanner-section">
+            <div class="scanner-container">
+                <div class="scanner-header">
+                    <h2><i class="fas fa-barcode"></i> Live Scanner</h2>
+                    <div class="scanner-controls">
+                        <button id="start-camera" class="primary-btn">
+                            <i class="fas fa-camera"></i> Start Camera
+                        </button>
+                        <button id="stop-camera" class="secondary-btn" style="display: none;">
+                            <i class="fas fa-stop"></i> Stop Camera
+                        </button>
+                    </div>
+                </div>
+
+                <div class="scanner-frame">
+                    <div class="scanner-line"></div>
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                    <video id="video" width="100%" height="100%"></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                    
+                    <div class="scanner-overlay">
+                        <div class="zoom-controls">
+                            <button id="zoom-out" class="zoom-btn"><i class="fas fa-search-minus"></i></button>
+                            <span id="zoom-level">1x</span>
+                            <button id="zoom-in" class="zoom-btn"><i class="fas fa-search-plus"></i></button>
+                        </div>
+                        <div class="focus-mode">
+                            <button id="toggle-focus" class="focus-btn">
+                                <i class="fas fa-dot-circle"></i> Auto Focus
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="upload-section">
+                    <div class="file-upload">
+                        <label for="file-input" class="upload-btn">
+                            <i class="fas fa-cloud-upload-alt"></i> Upload Image
+                        </label>
+                        <input type="file" id="file-input" accept="image/*" style="display: none;">
+                    </div>
+                    <p class="upload-hint">or drag and drop an image here</p>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <h2><i class="fas fa-clipboard-list"></i> Scan Results</h2>
+                <div id="results" class="results-container">
+                    <div class="empty-state">
+                        <i class="fas fa-barcode"></i>
+                        <p>No barcode scanned yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-section">
+            <h2><i class="fas fa-star"></i> Features</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <i class="fas fa-barcode"></i>
+                    <h3>Multiple Formats</h3>
+                    <p>Supports all common barcode formats including EAN, UPC, Code 128, and more.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-camera"></i>
+                    <h3>Live Scanning</h3>
+                    <p>Real-time barcode detection using your device's camera.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-image"></i>
+                    <h3>Image Upload</h3>
+                    <p>Upload and scan barcode images from your device.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-sliders-h"></i>
+                    <h3>Advanced Controls</h3>
+                    <p>Zoom and focus controls for better scanning experience.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <audio id="success-sound" preload="auto">
+        <source src="./sound.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="barcode.js"></script>
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownContent');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('dropdownContent');
+            const dropdownBtn = document.querySelector('.dropdown-btn');
+            
+            if (!dropdown.contains(event.target) && !dropdownBtn.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html> 

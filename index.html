@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free QR Code Scanner</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        // Check login status before loading the page
+        window.onload = function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true' || 
+                             sessionStorage.getItem('isLoggedIn') === 'true';
+            
+            if (!isLoggedIn) {
+                console.log('User not logged in, redirecting to login...');
+                window.location.href = 'login.html';
+            } else {
+                console.log('User is logged in, loading page...');
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- 3D Background Elements -->
+    <div class="background-3d">
+        <div class="grid-lines"></div>
+        <div class="scanning-line"></div>
+        <div class="floating-qr"></div>
+        <div class="floating-qr"></div>
+        <div class="floating-qr"></div>
+        <div class="particles"></div>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img src="bggg.jpg" alt="Quantum Coder Logo">
+                <a href="#">Quantum Coder</a>
+            </div>
+            <nav>
+                <ul>
+                    <li class="dropdown">
+                        <button class="dropdown-btn" onclick="toggleDropdown()"><i class="fas fa-ellipsis-v"></i></button>
+                        <div class="dropdown-content" id="dropdownContent">
+                            <a href="index.html" class="dropdown-item">
+                                <i class="fas fa-home"></i> Home
+                            </a>
+                            <a href="barcode.html" class="dropdown-item">
+                                <i class="fas fa-barcode"></i> Bar Code Scanner
+                            </a>
+                            <a href="about.html" class="dropdown-item">
+                                <i class="fas fa-info-circle"></i> About Us
+                            </a>
+                        </div>
+                    </li>
+                    <li><button id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button></li>
+                    <li><button id="dark-mode-toggle"><i class="fas fa-moon"></i></button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Free QR Code Scanner</h1>
+        <p>Scan the QR code online with our QR code scanner. Upload a QR code image, screenshot, or directly access the webcam to scan and decode the code in real-time.</p>
+        
+        <div class="scanner-container">
+            <div class="upload-section">
+                <h2>Upload QR Code</h2>
+                <div class="file-upload-container">
+                    <label for="file-input" class="file-upload-label">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Choose Image</span>
+                    </label>
+                    <input type="file" id="file-input" accept="image/*" style="display: none;">
+                    <div id="image-preview" class="image-preview">
+                        <p>No image selected</p>
+                    </div>
+                </div>
+                <button id="upload-btn">Scan Image</button>
+            </div>
+            
+            <div class="camera-section">
+                <h2>Scan QR Code</h2>
+                <div id="camera-container">
+                    <div class="scanner-frame">
+                        <div class="scanner-line"></div>
+                        <div class="corner top-left"></div>
+                        <div class="corner top-right"></div>
+                        <div class="corner bottom-left"></div>
+                        <div class="corner bottom-right"></div>
+                    </div>
+                    <video id="video" width="300" height="300"></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                </div>
+                <button id="start-camera">Start Camera</button>
+                <button id="stop-camera" style="display: none;">Stop Camera</button>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <h2>Scanned Results</h2>
+            <div id="results"></div>
+        </div>
+
+        <!-- Add audio element -->
+        <audio id="success-sound" preload="auto">
+            <source src="./sound.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>&copy; 2025 QR Scanner. All Rights Reserved.</p>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+    <script>
+        // Add this script at the end of the body
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownContent');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('dropdownContent');
+            const dropdownBtn = document.querySelector('.dropdown-btn');
+            
+            if (!dropdown.contains(event.target) && !dropdownBtn.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html> 
